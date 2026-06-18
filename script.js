@@ -85,19 +85,31 @@ function countSentences(text) {
 
 /**
  * 日本語を1分500文字、英単語を1分200語として読了時間を推定する。
+ * 日本語と英語が混在しても二重に数えないよう、それぞれを分けて集計する。
  */
-function formatReadingTime(chars, words) {
-  if (chars === 0) return "0秒";
+function formatReadingTime(text) {
+  if (!text.trim()) return "0秒";
 
-  const japaneseLike = Math.max(0, chars - words);
-  const minutes = japaneseLike / 500 + words / 200;
-  const seconds = Math.max(1, Math.ceil(minutes * 60));
+  const japaneseCharacters =
+    text.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}ー々〆ヵヶ]/gu)
+      ?.length || 0;
+  const englishWords =
+    text.match(/[\p{Script=Latin}\p{N}]+(?:['’][\p{Script=Latin}\p{N}]+)*/gu)
+      ?.length || 0;
+  const minutes = japaneseCharacters / 500 + englishWords / 200;
 
-  if (seconds < 60) return `${seconds}秒`;
-  if (seconds < 3600) return `約${Math.ceil(seconds / 60)}分`;
+  // 推定値であるため、細かすぎる表示を避けて5秒単位で切り上げる。
+  const seconds = Math.max(5, Math.ceil((minutes * 60) / 5) * 5);
+  if (seconds < 60) return `約${seconds}秒`;
+
   const hours = Math.floor(seconds / 3600);
-  const remainingMinutes = Math.ceil((seconds % 3600) / 60);
-  return `${hours}時間${remainingMinutes ? `${remainingMinutes}分` : ""}`;
+  const remainingMinutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  const minutePart = remainingMinutes ? `${remainingMinutes}分` : "";
+  const secondPart = remainingSeconds ? `${remainingSeconds}秒` : "";
+
+  if (hours > 0) return `約${hours}時間${minutePart}${secondPart}`;
+  return `約${remainingMinutes}分${secondPart}`;
 }
 
 /**
@@ -144,7 +156,7 @@ function updateCounts() {
   output.paragraphs.textContent = numberFormat.format(paragraphs);
   output.sentences.textContent = numberFormat.format(sentences);
   output.bytes.textContent = numberFormat.format(bytes);
-  output.readingTime.textContent = formatReadingTime(chars, words);
+  output.readingTime.textContent = formatReadingTime(text);
   updateLimit(chars);
 }
 
