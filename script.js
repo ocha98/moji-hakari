@@ -26,6 +26,13 @@ const progressBar = document.querySelector("#limit-bar");
 // 数値を「1,000」のような日本語向けの形式で表示する。
 const numberFormat = new Intl.NumberFormat("ja-JP");
 
+// 推定読了時間の計算基準。
+const READING_SPEED = Object.freeze({
+  japaneseCharactersPerMinute: 500,
+  englishWordsPerMinute: 200,
+  displayStepSeconds: 5,
+});
+
 // Intl.Segmenterを使い、文字・単語・文の境界を言語に応じて判定する。
 // 対応していないブラウザでは、各関数内の代替処理を使用する。
 const graphemeSegmenter =
@@ -142,8 +149,9 @@ function countSentences(text) {
 }
 
 /**
- * 日本語を1分500文字、英単語を1分200語として読了時間を推定する。
+ * READING_SPEEDで定義した読書速度を基準に、読了時間を推定する。
  * 日本語と英語が混在しても二重に数えないよう、それぞれを分けて集計する。
+ * 表示時間は設定された秒数単位で切り上げる。
  */
 function formatReadingTime(text) {
   if (!text.trim()) return "0秒";
@@ -154,10 +162,16 @@ function formatReadingTime(text) {
   const englishWords =
     text.match(/[\p{Script=Latin}\p{N}]+(?:['’][\p{Script=Latin}\p{N}]+)*/gu)
       ?.length || 0;
-  const minutes = japaneseCharacters / 500 + englishWords / 200;
+  const minutes =
+    japaneseCharacters / READING_SPEED.japaneseCharactersPerMinute +
+    englishWords / READING_SPEED.englishWordsPerMinute;
 
-  // 推定値であるため、細かすぎる表示を避けて5秒単位で切り上げる。
-  const seconds = Math.max(5, Math.ceil((minutes * 60) / 5) * 5);
+  // 推定値であるため、細かすぎる表示を避けて設定単位で切り上げる。
+  const seconds = Math.max(
+    READING_SPEED.displayStepSeconds,
+    Math.ceil((minutes * 60) / READING_SPEED.displayStepSeconds) *
+      READING_SPEED.displayStepSeconds,
+  );
   if (seconds < 60) return `約${seconds}秒`;
 
   const hours = Math.floor(seconds / 3600);
