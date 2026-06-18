@@ -1,4 +1,10 @@
 :root {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Yu Gothic UI",
+    "Hiragino Sans", "Noto Sans JP", sans-serif;
+  --font-mono:
+    ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono",
+    monospace;
   --paper: #f6f3ed;
   --surface: #fffdfa;
   --ink: #20201e;
@@ -15,7 +21,7 @@
   --button-text: #fffdfa;
   --button-hover-text: #20201e;
   color-scheme: light;
-  font-family: "Noto Sans JP", sans-serif;
+  font-family: var(--font-sans);
   color: var(--ink);
   background: var(--paper);
   font-synthesis: none;
@@ -221,7 +227,7 @@ button {
 
 .stat-value {
   margin-top: 4px;
-  font-family: "DM Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 38px;
   font-weight: 500;
   line-height: 1;
@@ -397,7 +403,7 @@ textarea::placeholder {
   width: 92px;
   padding: 6px 8px;
   color: var(--ink);
-  font-family: "DM Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   text-align: right;
   background: var(--paper);
@@ -460,7 +466,7 @@ textarea::placeholder {
 
 .detail-stat strong {
   margin-top: 5px;
-  font-family: "DM Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 22px;
   font-weight: 500;
 }
@@ -499,7 +505,7 @@ textarea::placeholder {
 
 .feature-number {
   color: var(--orange);
-  font-family: "DM Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
 }
 
@@ -521,7 +527,7 @@ footer {
   justify-content: space-between;
   padding: 0 0 40px;
   color: var(--footer);
-  font-family: "DM Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.08em;
 }
@@ -539,7 +545,7 @@ footer {
 
 .repository-eyebrow {
   color: var(--orange);
-  font-family: "DM Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 500;
   letter-spacing: 0.16em;
