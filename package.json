@@ -1,0 +1,17 @@
+{
+  "name": "moji-hakari",
+  "version": "1.0.0",
+  "private": true,
+  "description": "シンプルに使える文字数・単語数カウンター",
+  "scripts": {
+    "dev": "parcel index.html",
+    "prebuild": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "parcel build index.html --dist-dir dist --no-source-maps"
+  },
+  "devDependencies": {
+    "parcel": "^2.15.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

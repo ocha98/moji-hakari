@@ -1,0 +1,10 @@
+# npmでインストールされる依存関係
+node_modules/
+
+# Parcelが生成するキャッシュと本番用ファイル
+.parcel-cache/
+dist/
+
+# ローカル環境のファイル
+.DS_Store
+*.log
