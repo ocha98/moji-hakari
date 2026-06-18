@@ -1,6 +1,7 @@
 // 入力欄や設定欄など、操作に使用するHTML要素を取得する。
 const textInput = document.querySelector("#text-input");
 const charLimitInput = document.querySelector("#char-limit");
+const saveDraftInput = document.querySelector("#save-draft");
 const saveStatus = document.querySelector("#save-status");
 const toast = document.querySelector("#toast");
 
@@ -148,20 +149,41 @@ function updateCounts() {
 }
 
 /**
- * 下書きと目標文字数を、このブラウザのlocalStorageへ保存する。
- * サーバーへの送信は行わない。
+ * 下書き保存が有効な場合だけ、文章と目標文字数をlocalStorageへ保存する。
  */
 function saveDraft() {
+  if (!saveDraftInput.checked) return;
+
   try {
     localStorage.setItem("mojihakari-draft", textInput.value);
     localStorage.setItem("mojihakari-limit", charLimitInput.value);
+    localStorage.setItem("mojihakari-save-enabled", "true");
     saveStatus.textContent = "保存しました";
     window.clearTimeout(saveTimer);
     saveTimer = window.setTimeout(() => {
-      saveStatus.textContent = "この端末に自動保存";
+      saveStatus.textContent = "このブラウザに自動保存";
     }, 1200);
   } catch {
-    saveStatus.textContent = "自動保存は利用できません";
+    // 保存に失敗した場合は、安全側に倒して保存設定を無効にする。
+    saveDraftInput.checked = false;
+    removeSavedDraft();
+    saveStatus.textContent = "保存できないため、保存しません";
+  }
+}
+
+/**
+ * 保存済みの入力内容と保存設定をlocalStorageから完全に削除する。
+ */
+function removeSavedDraft() {
+  window.clearTimeout(saveTimer);
+
+  try {
+    localStorage.removeItem("mojihakari-draft");
+    localStorage.removeItem("mojihakari-limit");
+    localStorage.removeItem("mojihakari-save-enabled");
+    saveStatus.textContent = "保存しません";
+  } catch {
+    saveStatus.textContent = "保存しません";
   }
 }
 
@@ -224,6 +246,19 @@ charLimitInput.addEventListener("input", () => {
   saveDraft();
 });
 
+// 保存を有効にした場合だけ現在の文章を保存し、無効にした瞬間に保存済みデータを削除する。
+saveDraftInput.addEventListener("change", () => {
+  if (saveDraftInput.checked) {
+    saveStatus.textContent = "このブラウザに自動保存";
+    saveDraft();
+    showToast("ブラウザへの保存を有効にしました");
+    return;
+  }
+
+  removeSavedDraft();
+  showToast("保存済みの文章を削除しました");
+});
+
 document.querySelector("#paste-button").addEventListener("click", pasteText);
 document.querySelector("#copy-button").addEventListener("click", copyText);
 document.querySelector("#clear-button").addEventListener("click", () => {
@@ -235,13 +270,33 @@ document.querySelector("#clear-button").addEventListener("click", () => {
   showToast("テキストをクリアしました");
 });
 
-// 前回保存した下書きと目標文字数があれば復元する。
+// 明示的に保存を有効にした場合だけ、前回の下書きを復元する。
+// 旧バージョンが保存したデータも、保存設定がなければ削除する。
 try {
-  textInput.value = localStorage.getItem("mojihakari-draft") || "";
-  charLimitInput.value = localStorage.getItem("mojihakari-limit") || "";
+  const isSaveEnabled =
+    localStorage.getItem("mojihakari-save-enabled") === "true";
+
+  saveDraftInput.checked = isSaveEnabled;
+
+  if (isSaveEnabled) {
+    textInput.value = localStorage.getItem("mojihakari-draft") || "";
+    charLimitInput.value = localStorage.getItem("mojihakari-limit") || "";
+    saveStatus.textContent = "このブラウザに自動保存";
+  } else {
+    removeSavedDraft();
+  }
 } catch {
   saveStatus.textContent = "自動保存は利用できません";
 }
+
+// 保存しない設定では、履歴から戻った際に文章が復元されないようページ離脱時に入力欄を空にする。
+window.addEventListener("pagehide", () => {
+  if (saveDraftInput.checked) return;
+
+  removeSavedDraft();
+  textInput.value = "";
+  charLimitInput.value = "";
+});
 
 // 初期表示時にも、復元した文章を含めて集計する。
 updateCounts();

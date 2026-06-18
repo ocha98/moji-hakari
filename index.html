@@ -7,8 +7,24 @@
       name="description"
       content="すぐ使える、シンプルな文字数・単語数カウンター。入力内容はブラウザの外へ送信されません。"
     />
+    <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#f6f3ed" />
-    <title>モジハカリ — 文字数・単語数カウンター</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content="モジハカリ" />
+    <meta
+      property="og:title"
+      content="文字数・単語数カウンター｜モジハカリ"
+    />
+    <meta
+      property="og:description"
+      content="文章を貼り付けるだけで、文字数・単語数・行数などをリアルタイムに確認できます。"
+    />
+    <meta property="og:url" content="https://mojihakari.ochappa.net/" />
+    <meta name="twitter:card" content="summary" />
+    <title>文字数・単語数カウンター｜モジハカリ</title>
+    <link rel="canonical" href="https://mojihakari.ochappa.net/" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,6 +32,22 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "モジハカリ",
+        "url": "https://mojihakari.ochappa.net/",
+        "description": "文字数・単語数・行数などをリアルタイムで確認できる文字数カウンター。",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "JPY"
+        }
+      }
+    </script>
   </head>
   <body>
     <div class="page-shell">
@@ -31,16 +63,10 @@
       </header>
 
       <main>
-        <section class="hero" aria-labelledby="page-title">
-          <p class="eyebrow">CHARACTER &amp; WORD COUNTER</p>
-          <h1 id="page-title">言葉の量を、<br /><em>すぐに測る。</em></h1>
-          <p class="lead">
-            テキストを貼り付けるだけ。文字数も単語数も、<br class="desktop-only" />
-            書くために必要な数字をリアルタイムで。
-          </p>
-        </section>
-
-        <section class="counter-app" aria-label="文字数カウンター">
+        <section class="counter-app" aria-labelledby="page-title">
+          <h1 id="page-title" class="visually-hidden">
+            文字数・単語数カウンター
+          </h1>
           <div class="primary-stats" aria-live="polite" aria-atomic="true">
             <div class="primary-stat">
               <span class="stat-label">文字数</span>
@@ -84,12 +110,22 @@
             <textarea
               id="text-input"
               placeholder="ここに文章を入力、または貼り付けてください…"
-              spellcheck="true"
+              spellcheck="false"
+              autocomplete="off"
               autofocus
               aria-label="カウントするテキスト"
             ></textarea>
             <div class="editor-footer">
-              <span id="save-status">この端末に自動保存</span>
+              <div class="save-control">
+                <label class="save-switch" for="save-draft">
+                  <input id="save-draft" type="checkbox" />
+                  <span class="switch-track" aria-hidden="true">
+                    <span class="switch-thumb"></span>
+                  </span>
+                  ブラウザに保存
+                </label>
+                <span id="save-status">保存しません</span>
+              </div>
               <label class="limit-control" for="char-limit">
                 目標文字数
                 <input
@@ -149,7 +185,7 @@
           <div>
             <span class="feature-number">02</span>
             <h2>端末内で完結</h2>
-            <p>文章をサーバーへ送らず、ブラウザ内で数えます。</p>
+            <p>文章を外部へ送信せず、保存も必要なときだけ選べます。</p>
           </div>
         </section>
 

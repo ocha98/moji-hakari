@@ -90,56 +90,20 @@ button {
   box-shadow: 0 0 0 4px rgba(78, 170, 115, 0.11);
 }
 
-.hero {
-  padding: 86px 0 55px;
-  text-align: center;
-}
-
-.eyebrow {
-  margin: 0 0 22px;
-  color: var(--orange);
-  font-family: "DM Mono", monospace;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-}
-
-h1 {
-  margin: 0;
-  font-size: clamp(44px, 6vw, 76px);
-  line-height: 1.18;
-  letter-spacing: -0.055em;
-}
-
-h1 em {
-  position: relative;
-  font-style: normal;
-  font-weight: 400;
-}
-
-h1 em::after {
-  position: absolute;
-  right: 0;
-  bottom: 2px;
-  left: 0;
-  height: 9px;
-  content: "";
-  background: var(--orange);
-  opacity: 0.22;
-  transform: rotate(-1deg);
-  z-index: -1;
-}
-
-.lead {
-  margin: 28px 0 0;
-  color: var(--muted);
-  font-size: 15px;
-  line-height: 2;
-}
-
 .counter-app {
   max-width: 980px;
-  margin: 0 auto;
+  margin: 64px auto 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .primary-stats {
@@ -280,6 +244,68 @@ textarea::placeholder {
   color: var(--muted);
   font-size: 10px;
   border-top: 1px solid var(--line);
+}
+
+.save-control {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.save-switch {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.save-switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.switch-track {
+  position: relative;
+  width: 30px;
+  height: 17px;
+  background: #c8c3ba;
+  border-radius: 999px;
+  transition: background 150ms ease;
+}
+
+.switch-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 11px;
+  height: 11px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(32, 32, 30, 0.2);
+  transition: transform 150ms ease;
+}
+
+.save-switch input:checked + .switch-track {
+  background: var(--orange);
+}
+
+.save-switch input:checked + .switch-track .switch-thumb {
+  transform: translateX(13px);
+}
+
+.save-switch input:focus-visible + .switch-track {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
+#save-status {
+  color: var(--muted);
 }
 
 .limit-control {
@@ -510,16 +536,8 @@ footer {
     font-size: 10px;
   }
 
-  .hero {
-    padding: 62px 0 42px;
-  }
-
-  h1 {
-    font-size: clamp(40px, 13vw, 58px);
-  }
-
-  .desktop-only {
-    display: none;
+  .counter-app {
+    margin-top: 38px;
   }
 
   .primary-stat {
@@ -614,7 +632,12 @@ footer {
     gap: 12px;
     align-items: flex-start;
     padding: 13px 16px;
-    flex-direction: column-reverse;
+    flex-direction: column;
+  }
+
+  .save-control {
+    width: 100%;
+    justify-content: space-between;
   }
 }
 

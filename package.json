@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "parcel index.html",
     "prebuild": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
-    "build": "parcel build index.html --dist-dir dist --no-source-maps"
+    "build": "parcel build index.html --dist-dir dist --no-source-maps --no-cache",
+    "postbuild": "node scripts/copy-static.mjs"
   },
   "devDependencies": {
+    "@parcel/packager-raw-url": "^2.16.4",
+    "@parcel/transformer-jsonld": "^2.16.4",
     "parcel": "^2.15.4"
   },
   "engines": {
