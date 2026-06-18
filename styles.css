@@ -95,15 +95,11 @@ button {
   margin: 64px auto 0;
 }
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+.page-title {
+  margin: 0 0 18px;
+  font-size: clamp(18px, 2.2vw, 24px);
+  line-height: 1.4;
+  letter-spacing: -0.02em;
 }
 
 .primary-stats {
