@@ -3,6 +3,9 @@ const textInput = document.querySelector("#text-input");
 const charLimitInput = document.querySelector("#char-limit");
 const saveDraftInput = document.querySelector("#save-draft");
 const saveStatus = document.querySelector("#save-status");
+const themeToggle = document.querySelector("#theme-toggle");
+const themeLabel = document.querySelector("#theme-label");
+const themeColor = document.querySelector('meta[name="theme-color"]');
 const toast = document.querySelector("#toast");
 
 // カウント結果を表示する要素をまとめて管理する。
@@ -40,6 +43,61 @@ const sentenceSegmenter =
 
 let toastTimer;
 let saveTimer;
+
+const themes = ["system", "light", "dark"];
+const themeNames = {
+  system: "端末設定",
+  light: "ライト",
+  dark: "ダーク",
+};
+
+/**
+ * 選択したテーマを画面へ反映し、テーマ切り替えボタンの説明を更新する。
+ * 端末設定の場合はdata属性を外し、OSの配色設定へ追従する。
+ */
+function applyTheme(theme) {
+  if (theme === "system") {
+    delete document.documentElement.dataset.theme;
+  } else {
+    document.documentElement.dataset.theme = theme;
+  }
+
+  const currentIndex = themes.indexOf(theme);
+  const nextTheme = themes[(currentIndex + 1) % themes.length];
+  const isDark =
+    theme === "dark" ||
+    (theme === "system" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+  themeLabel.textContent = themeNames[theme];
+  themeToggle.title = `表示テーマ：${themeNames[theme]}`;
+  themeToggle.setAttribute(
+    "aria-label",
+    `表示テーマ：${themeNames[theme]}。クリックして${themeNames[nextTheme]}モードに変更`,
+  );
+  themeColor.content = isDark ? "#171715" : "#f6f3ed";
+}
+
+function getSavedTheme() {
+  try {
+    const savedTheme = localStorage.getItem("mojihakari-theme");
+    return themes.includes(savedTheme) ? savedTheme : "system";
+  } catch {
+    return "system";
+  }
+}
+
+function saveTheme(theme) {
+  try {
+    if (theme === "system") {
+      localStorage.removeItem("mojihakari-theme");
+    } else {
+      localStorage.setItem("mojihakari-theme", theme);
+    }
+  } catch {
+    // テーマ設定を保存できなくても、現在のページでは切り替えを適用する。
+  }
+}
 
 /**
  * 見た目上の文字数を数える。
@@ -258,6 +316,22 @@ charLimitInput.addEventListener("input", () => {
   saveDraft();
 });
 
+themeToggle.addEventListener("click", () => {
+  const currentTheme = document.documentElement.dataset.theme || "system";
+  const nextTheme =
+    themes[(themes.indexOf(currentTheme) + 1) % themes.length];
+
+  applyTheme(nextTheme);
+  saveTheme(nextTheme);
+});
+
+// 端末設定を選択中は、OS側のテーマ変更にもリアルタイムで追従する。
+window
+  .matchMedia("(prefers-color-scheme: dark)")
+  .addEventListener("change", () => {
+    if (!document.documentElement.dataset.theme) applyTheme("system");
+  });
+
 // 保存を有効にした場合だけ現在の文章を保存し、無効にした瞬間に保存済みデータを削除する。
 saveDraftInput.addEventListener("change", () => {
   if (saveDraftInput.checked) {
@@ -311,4 +385,5 @@ window.addEventListener("pagehide", () => {
 });
 
 // 初期表示時にも、復元した文章を含めて集計する。
+applyTheme(getSavedTheme());
 updateCounts();

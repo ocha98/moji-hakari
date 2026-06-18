@@ -23,6 +23,16 @@
     <meta property="og:url" content="https://mojihakari.ochappa.net/" />
     <meta name="twitter:card" content="summary" />
     <title>文字数・単語数カウンター｜モジハカリ</title>
+    <script>
+      (() => {
+        try {
+          const theme = localStorage.getItem("mojihakari-theme");
+          if (theme === "light" || theme === "dark") {
+            document.documentElement.dataset.theme = theme;
+          }
+        } catch {}
+      })();
+    </script>
     <link rel="canonical" href="https://mojihakari.ochappa.net/" />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -56,9 +66,31 @@
           <span class="brand-mark" aria-hidden="true">文</span>
           <span>モジハカリ</span>
         </a>
-        <div class="privacy-note">
-          <span class="status-dot" aria-hidden="true"></span>
-          入力内容は外部に送信されません
+        <div class="header-actions">
+          <div class="privacy-note">
+            <span class="status-dot" aria-hidden="true"></span>
+            入力内容は外部に送信されません
+          </div>
+          <button
+            id="theme-toggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="表示テーマ：端末設定。クリックしてライトモードに変更"
+            title="表示テーマ：端末設定"
+          >
+            <svg class="theme-icon theme-icon-system" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="13" rx="2" />
+              <path d="M8 21h8M12 17v4" />
+            </svg>
+            <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" />
+            </svg>
+            <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.2 15.5A8.5 8.5 0 0 1 8.5 3.8 8.5 8.5 0 1 0 20.2 15.5Z" />
+            </svg>
+            <span id="theme-label">端末設定</span>
+          </button>
         </div>
       </header>
 
